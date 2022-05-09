@@ -15,7 +15,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // check if user exists
-    const userExists = await User.findOne({email})
+    const userExists = await User.findOne({ email })
 
     if(userExists){
         res.status(400)
@@ -27,19 +27,19 @@ const registerUser = asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt)
 
     const user = User.create({
-        name,
-        email,
+        name: name,
+        email: email,
         password: hashedPassword,
     })
 
-    if(user){
+    if(user) {
         res.status(201).json({
             _id: user.id,
             name: user.name,
             email: user.email,
             token: generateToken(user._id)
         })
-    }else{
+    } else {
         res.status(400)
         throw new Error("Invalid user data")
     }
@@ -72,13 +72,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @route   GET api/users/me
 // @access  Private
 const getMe = asyncHandler(async (req, res) => {
-    const {_id, name, email} = await User.findById(req.user.id)
-
-    res.status(200).json({
-        id: _id,
-        name,
-        email
-    })
+    res.status(200).json(req.user)
 })
 
 // Generate JWT
